@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Northwest Flower & Garden Festival 2026",
+    "start_date": "2026-02-11",
+    "end_date": "2026-02-15",
+    "location_name": "Seattle, WA",
+    "location_address": "Convention Center, Seattle",
+    "website_url": "https://gardenshow.com",
+    "description": "One of the largest garden festivals in North America, featuring a massive plant market and world-class display gardens.",
+    "event_type": "Convention"
+  },
+  {
+    "title": "Rare Plant & Orchid Festival 2026",
+    "start_date": "2026-05-16",
+    "end_date": "2026-05-17",
+    "location_name": "Miami, FL",
+    "location_address": "Miami, Florida",
+    "website_url": "https://rareplantfestival.com",
+    "description": "Miami's premier destination for rare aroids, orchids, and tropical exotics.",
+    "event_type": "Market"
+  },
+  {
+    "title": "Southeastern Plant Symposium 2026",
+    "start_date": "2026-06-12",
+    "end_date": "2026-06-13",
+    "location_name": "Raleigh, NC",
+    "location_address": "JC Raulston Arboretum, Raleigh",
+    "website_url": "https://jcra.ncsu.edu/events/plant-symposium/",
+    "description": "A deep dive into rare horticulture hosted by the JC Raulston Arboretum, featuring a world-renowned rare plant auction.",
+    "event_type": "Symposium"
+  },
+  {
+    "title": "Plantmania Expo: Austin",
+    "start_date": "2026-07-18",
+    "end_date": "2026-07-19",
+    "location_name": "Austin, TX",
+    "location_address": "Austin, Texas",
+    "website_url": "https://plantmaniaexpo.com/austin",
+    "description": "A high-energy plant market focusing on tropical house plants and community swaps.",
+    "event_type": "Market"
+  },
+  {
+    "title": "Plantmania Expo: Little Rock",
+    "start_date": "2026-08-15",
+    "end_date": "2026-08-16",
+    "location_name": "Little Rock, AR",
+    "location_address": "Little Rock, Arkansas",
+    "website_url": "https://plantmaniaexpo.com/littlerock",
+    "description": "Bringing the best tropical and rare plant vendors to Central Arkansas.",
+    "event_type": "Market"
+  },
+  {
+    "title": "IAS Tropical Plant Expo 2026",
+    "start_date": "2026-09-19",
+    "end_date": "2026-09-20",
+    "location_name": "Miami, FL",
+    "location_address": "Miami, Florida",
+    "website_url": "https://aroid.org",
+    "description": "The definitive global gathering for the International Aroid Society, featuring the world's rarest Philodendrons and Anthuriums.",
+    "event_type": "Convention"
+  },
+  {
+    "title": "Plantmania Expo: Orlando",
+    "start_date": "2026-09-26",
+    "end_date": "2026-09-27",
+    "location_name": "Orlando, FL",
+    "location_address": "Orlando, Florida",
+    "website_url": "https://plantmaniaexpo.com/orlando",
+    "description": "A massive botanical market in the heart of Florida's plant-growing region.",
+    "event_type": "Market"
+  },
+  {
+    "title": "Plantmania Expo: Daphne",
+    "start_date": "2026-10-17",
+    "end_date": "2026-10-18",
+    "location_name": "Daphne, AL",
+    "location_address": "Daphne, Alabama",
+    "website_url": "https://plantmaniaexpo.com/alabama",
+    "description": "Serving the Gulf Coast plant community with a curated selection of specialized vendors.",
+    "event_type": "Market"
+  },
+  {
+    "title": "PlantCon Los Angeles 2026",
+    "start_date": "2026-11-07",
+    "end_date": "2026-11-08",
+    "location_name": "Los Angeles, CA",
+    "location_address": "Los Angeles, California",
+    "website_url": "https://plantcon.org",
+    "description": "The West Coast iteration of the world's most immersive plant convention.",
+    "event_type": "Convention"
+  }
+]
