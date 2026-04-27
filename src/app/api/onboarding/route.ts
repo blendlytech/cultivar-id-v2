@@ -33,51 +33,55 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
     }
 
-    // 1. Check if user already exists (targeted lookup, not listUsers)
-    const { data: existingUserData } = await supabase.auth.admin.getUserByEmail(data.email);
-    const existingUser = existingUserData?.user ?? null;
+    // 1. Try to create the user directly (avoids downloading all users)
+    let userId: string;
+    const actionLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
 
-    let userId;
-    let actionLink;
-
-    if (existingUser) {
-      userId = existingUser.id;
-      
-      // If already verified, update password
-      const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(userId, {
-        password: data.password,
-        email_confirm: true,
-        user_metadata: {
-          business_name: data.businessName,
-          role: 'vendor'
-        }
-      });
-
-      if (updateError) {
-        console.error('Update user error:', updateError);
-        return NextResponse.json({ error: `Update Error: ${updateError.message}` }, { status: 500 });
+    const { data: newUserData, error: createError } = await supabase.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: {
+        business_name: data.businessName,
+        role: 'vendor'
       }
+    });
 
-      actionLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
+    if (createError) {
+      // User already exists — look them up via generateLink and update
+      if (createError.message?.includes('already been registered') || createError.status === 422) {
+        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+          type: 'magiclink',
+          email: data.email,
+        });
+
+        if (linkError || !linkData?.user) {
+          console.error('Lookup error:', linkError);
+          return NextResponse.json({ error: 'This email is already registered. Please log in instead.' }, { status: 400 });
+        }
+
+        userId = linkData.user.id;
+
+        // Update password and confirm
+        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
+          password: data.password,
+          email_confirm: true,
+          user_metadata: {
+            business_name: data.businessName,
+            role: 'vendor'
+          }
+        });
+
+        if (updateError) {
+          console.error('Update user error:', updateError);
+          return NextResponse.json({ error: `Update Error: ${updateError.message}` }, { status: 500 });
+        }
+      } else {
+        console.error('Auth creation error:', createError);
+        return NextResponse.json({ error: `Auth Error: ${createError.message}` }, { status: 500 });
+      }
     } else {
-      // Create new user directly as confirmed
-      const { data: userData, error: authError } = await supabase.auth.admin.createUser({
-        email: data.email,
-        password: data.password,
-        email_confirm: true,
-        user_metadata: {
-          business_name: data.businessName,
-          role: 'vendor'
-        }
-      });
-
-      if (authError) {
-        console.error('Auth creation error:', authError);
-        return NextResponse.json({ error: `Auth Error: ${authError.message}` }, { status: 500 });
-      }
-
-      userId = userData.user.id;
-      actionLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
+      userId = newUserData.user.id;
     }
 
     // 2. Generate a simple slug from business name or owner name
