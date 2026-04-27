@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       await transporter.sendMail({
         from: `"${process.env.SMTP_FROM_NAME || 'Rare Plant Vendors'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
         replyTo: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER,
-        to: 'cmillls79@gmail.com', // TEST OVERRIDE
+        to: 'cmills79@gmail.com', // TEST OVERRIDE
         subject: "Verify Your Collector Access - Rare Plant Vendors",
         text: `Welcome to the Inner Circle, ${data.name || 'Collector'}!\n\nThank you for joining Rare Plant Vendors. Please verify your email to access your collector portal, save wishlists, and track provenance.\n\nPlease copy and paste the following link into your browser to verify your email:\n${actionLink}\n\nIf you did not request this, please safely ignore this email.\n\n— The Rare Plant Vendors Team`,
         html: `
