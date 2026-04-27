@@ -26,3 +26,7 @@
 [2026-04-27T18:25:47.774Z] Email sent successfully {
   "messageId": "<8ba8da57-8297-d1d3-c1a8-7b77e356a8b9@rareplantvendors.com>"
 }
+[2026-04-27T18:32:54.015Z] Onboarding request received {
+  "email": "cmills79@gmail.com",
+  "businessName": "Mills Botanicals"
+}
