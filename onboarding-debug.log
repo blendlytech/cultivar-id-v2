@@ -88,3 +88,18 @@
   "messageId": "<183a266b-5591-67ad-ea2b-45a889f5b887@rareplantvendors.com>",
   "actionLink": "https://dkdrvfemtyuapzuwyrgt.supabase.co/auth/v1/verify?token=e7affa73e637c21f2a8e1a86b806b325c1095c1cbfaaefb54e3cc047&type=signup&redirect_to=https://botanicals-directory-deal-source.vercel.app/"
 }
+[2026-04-27T19:38:16.718Z] Onboarding request received {
+  "email": "final-test@example.com",
+  "businessName": "Final Test Botanicals"
+}
+[2026-04-27T19:38:20.705Z] Verifying SMTP connection... 
+[2026-04-27T19:38:22.651Z] SMTP connection verified 
+[2026-04-27T19:38:22.656Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T19:38:24.012Z] Email sent successfully {
+  "messageId": "<41281d6e-d395-6473-2a6a-87a5facd0f8f@rareplantvendors.com>",
+  "actionLink": "https://dkdrvfemtyuapzuwyrgt.supabase.co/auth/v1/verify?token=738818f7e1ce328133e67e090f3139a9121cbefa80bf92a7b24bfd8d&type=signup&redirect_to=https://botanicals-directory-deal-source.vercel.app/"
+}
