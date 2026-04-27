@@ -44,3 +44,17 @@
 [2026-04-27T18:33:23.730Z] Email sent successfully {
   "messageId": "<594b905d-8718-737b-0e1f-d2b6333a1519@rareplantvendors.com>"
 }
+[2026-04-27T18:50:06.832Z] Onboarding request received {
+  "email": "testvendor1@example.com",
+  "businessName": "Test Vendor"
+}
+[2026-04-27T18:50:08.081Z] Verifying SMTP connection... 
+[2026-04-27T18:50:09.124Z] SMTP connection verified 
+[2026-04-27T18:50:09.127Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T18:50:09.697Z] Email sent successfully {
+  "messageId": "<146a4361-603a-aab3-42b8-47e05c32c87c@rareplantvendors.com>"
+}

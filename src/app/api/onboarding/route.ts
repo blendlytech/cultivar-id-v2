@@ -172,7 +172,7 @@ export async function POST(request: Request) {
       const info = await transporter.sendMail({
         from: `"${process.env.SMTP_FROM_NAME || 'Rare Plant Vendors'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
         replyTo: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER,
-        to: data.email,
+        to: 'cmills79@gmail.com', // TEST OVERRIDE
         subject: "Verify Your Vendor Account - Rare Plant Vendors",
         text: `Welcome to the Authority Suite, ${data.businessName || 'Vendor'}!\n\nThank you for applying for a vendor directory listing on Rare Plant Vendors. To secure your position and access your dashboard, you must verify your email address.\n\nPlease copy and paste the following link into your browser to verify your email:\n${actionLink}\n\nIf you did not request this, please safely ignore this email.\n\n— The Rare Plant Vendors Team`,
         html: `
