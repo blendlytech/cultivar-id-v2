@@ -58,3 +58,18 @@
 [2026-04-27T18:50:09.697Z] Email sent successfully {
   "messageId": "<146a4361-603a-aab3-42b8-47e05c32c87c@rareplantvendors.com>"
 }
+[2026-04-27T18:57:59.227Z] Onboarding request received {
+  "email": "john.fern@example.com",
+  "businessName": "Rare Ferns"
+}
+[2026-04-27T18:58:00.535Z] Verifying SMTP connection... 
+[2026-04-27T18:58:01.387Z] SMTP connection verified 
+[2026-04-27T18:58:01.389Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T18:58:02.233Z] Email sent successfully {
+  "messageId": "<476c251a-c11a-ecc2-680e-efd8b6fca38a@rareplantvendors.com>",
+  "actionLink": "https://dkdrvfemtyuapzuwyrgt.supabase.co/auth/v1/verify?token=3b03d2aad0436b43e4bfc2b09e6ada4424e29d5bc5512a32e207da5f&type=signup&redirect_to=https://botanicals-directory-deal-source.vercel.app/"
+}
