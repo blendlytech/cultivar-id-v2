@@ -26,7 +26,18 @@ export default function LoginPage() {
 
       if (authError) throw authError;
 
-      router.push('/dashboard');
+      // Check if user is a collector
+      const { data: collector } = await supabase
+        .from('collectors')
+        .select('id')
+        .eq('user_id', data.user?.id)
+        .single();
+
+      if (collector) {
+        router.push('/collector/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');

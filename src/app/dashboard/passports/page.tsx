@@ -12,6 +12,7 @@ interface Passport {
   mother_plant_origin: string | null;
   verification_hash: string;
   issued_at: string;
+  current_owner_id: string | null;
   inventory?: { variety: string | null };
 }
 
@@ -275,6 +276,18 @@ export default function PassportsDashboard() {
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                         <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', margin: 0, color: 'var(--text-primary)' }}>{p.specimen_name}</h3>
+                        <div style={{ 
+                          fontSize: '0.6rem', 
+                          fontWeight: 800, 
+                          padding: '0.2rem 0.6rem', 
+                          borderRadius: '100px', 
+                          background: p.current_owner_id ? 'rgba(46, 204, 113, 0.15)' : 'rgba(212,175,55,0.15)',
+                          color: p.current_owner_id ? '#2ecc71' : 'var(--gold)',
+                          border: `1px solid ${p.current_owner_id ? 'rgba(46, 204, 113, 0.3)' : 'rgba(212,175,55,0.3)'}`,
+                          letterSpacing: '0.05em'
+                        }}>
+                          {p.current_owner_id ? '✓ CLAIMED' : '● IN NURSERY'}
+                        </div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.75rem' }}>
                         <div style={{ fontSize: '0.75rem' }}>
