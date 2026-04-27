@@ -188,7 +188,7 @@ export async function POST(request: Request) {
           </div>
         `,
       });
-      log('Email sent successfully', { messageId: info.messageId });
+      log('Email sent successfully', { messageId: info.messageId, actionLink });
     } catch (mailError: any) {
       log('CRITICAL: Email sending failed', { error: mailError.message, stack: mailError.stack });
       // Log the action link server-side only for manual recovery — NEVER expose to client
