@@ -11,6 +11,26 @@ export default function VerifyPassportPage({ params }: { params: { hash: string 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [notified, setNotified] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [collector, setCollector] = useState<any>(null);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [claimSuccess, setClaimSuccess] = useState(false);
+
+  useEffect(() => {
+    async function getUser() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser(session.user);
+        const { data: col } = await supabase
+          .from('collectors')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
+        setCollector(col);
+      }
+    }
+    getUser();
+  }, []);
 
   useEffect(() => {
     async function verify() {
@@ -37,6 +57,46 @@ export default function VerifyPassportPage({ params }: { params: { hash: string 
   const handleRestockSignup = (e: React.FormEvent) => {
     e.preventDefault();
     setNotified(true);
+  };
+
+  const handleClaim = async () => {
+    if (!user) {
+      window.location.href = `/signup?redirect=/verify/${params.hash}&interest=${encodeURIComponent(passport.specimen_name)}`;
+      return;
+    }
+
+    if (!collector) {
+      alert("Please complete your collector profile to claim specimens.");
+      return;
+    }
+
+    setClaimLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch('/api/passports/claim', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ verification_hash: params.hash })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setClaimSuccess(true);
+        // Update local passport state
+        setPassport({ ...passport, current_owner_id: collector.id });
+      } else {
+        alert(result.error || "Failed to claim specimen");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while claiming.");
+    } finally {
+      setClaimLoading(false);
+    }
   };
 
   if (loading) {
@@ -184,57 +244,60 @@ export default function VerifyPassportPage({ params }: { params: { hash: string 
               </div>
             </div>
 
-            {/* Restock Alert / Collector CTA (New Feature) */}
+            {/* Claim Specimen Section (The Moment of Transfer) */}
             <div className="onboarding-card" style={{ 
               padding: '3rem', 
-              border: '2px solid var(--gold)', 
+              border: passport.current_owner_id ? '1px solid var(--glass-border)' : '2px solid var(--gold)', 
               background: 'linear-gradient(135deg, #0a1f18, #050505)', 
               textAlign: 'center',
               boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
             }}>
-              {passport.inventory?.status === 'sold' ? (
+              {passport.current_owner_id ? (
                 <>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>⏳</div>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', marginBottom: '1rem', color: 'white' }}>Currently Unavailable</h3>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>🛡️</div>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', marginBottom: '1rem', color: 'white' }}>Specimen Claimed</h3>
                   <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '2.5rem', maxWidth: '500px', margin: '0 auto 2.5rem', lineHeight: 1.6 }}>
-                    This specific specimen has found a new home. Join the priority waitlist to be first in line when {passport.vendors?.name} releases more propagation stock of {passport.specimen_name}.
+                    This specimen is officially registered to a private collection. Its provenance is secured and tracked on the CultivarID ledger.
                   </p>
-                  {notified ? (
-                    <div style={{ background: 'rgba(46, 204, 113, 0.1)', border: '1px solid #2ecc71', color: '#2ecc71', padding: '1rem', borderRadius: '8px', fontWeight: 600 }}>
-                      ✓ You are on the VIP priority list!
+                  <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                    <div style={{ background: 'rgba(46, 204, 113, 0.1)', border: '1px solid #2ecc71', color: '#2ecc71', padding: '0.8rem 2rem', borderRadius: '8px', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.1em' }}>
+                      ✓ VERIFIED OWNERSHIP
                     </div>
-                  ) : (
-                    <form onSubmit={handleRestockSignup} style={{ display: 'flex', gap: '0.75rem', maxWidth: '400px', margin: '0 auto' }}>
-                      <input 
-                        type="email" 
-                        required 
-                        placeholder="Your email address" 
-                        style={{ flex: 1, padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white' }} 
-                      />
-                      <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Bell size={18} /> Alert Me
-                      </button>
-                    </form>
-                  )}
+                  </div>
                 </>
               ) : (
                 <>
                   <div style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>✨</div>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', marginBottom: '1rem', color: 'white' }}>Acquire this Variety</h3>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.2rem', marginBottom: '1rem', color: 'white' }}>Claim Ownership</h3>
                   <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '2.5rem', maxWidth: '500px', margin: '0 auto 2.5rem', lineHeight: 1.6 }}>
-                    Secure your own {passport.specimen_name} directly from {passport.vendors?.name}. Registered specimens come with full CultivarID provenance certificates.
+                    Did you acquire this specimen? Claim it now to add it to your official digital collection, unlock growth tracking, and secure its provenance.
                   </p>
                   <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                    <Link href={`/vendors/${passport.vendors?.slug}`} className="btn-primary" style={{ padding: '1.2rem 2.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      Shop Now <ArrowRight size={18} />
-                    </Link>
-                    <Link href={`/signup?interest=${encodeURIComponent(passport.specimen_name)}&source=qr`} className="btn-ghost" style={{ padding: '1.2rem 2.5rem' }}>
-                      Track Variety
-                    </Link>
+                    <button 
+                      onClick={handleClaim} 
+                      disabled={claimLoading}
+                      className="btn-primary" 
+                      style={{ padding: '1.2rem 3rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1rem' }}
+                    >
+                      {claimLoading ? 'Processing...' : claimSuccess ? 'Success!' : 'Claim this Specimen'} <CheckCircle size={18} />
+                    </button>
                   </div>
                 </>
               )}
             </div>
+
+            {/* Restock Alert Section (Only if not claimed and status is sold) */}
+            {!passport.current_owner_id && passport.inventory?.status === 'sold' && (
+                <div className="onboarding-card" style={{ padding: '2rem', border: '1px solid var(--glass-border)', textAlign: 'center', background: 'rgba(255,255,255,0.02)' }}>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                    Not your plant? Join the waitlist for more stock.
+                  </p>
+                  <form onSubmit={handleRestockSignup} style={{ display: 'flex', gap: '0.75rem', maxWidth: '400px', margin: '0 auto' }}>
+                    <input type="email" required placeholder="Email address" style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'transparent', color: 'white' }} />
+                    <button type="submit" className="btn-ghost" style={{ fontSize: '0.8rem' }}>Notify Me</button>
+                  </form>
+                </div>
+            )}
           </div>
 
           {/* Sidebar */}
