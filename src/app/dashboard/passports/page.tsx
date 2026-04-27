@@ -335,42 +335,56 @@ export default function PassportsDashboard() {
                           const vendorName = vendor?.name || 'Rare Plant Vendors';
                           
                           win?.document.write(`
+                            <!DOCTYPE html>
                             <html>
                               <head>
-                                <title>Print Tag - ${p.specimen_name}</title>
+                                <title>CultivarID Tag - ${p.specimen_name}</title>
                                 <style>
-                                  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap');
-                                  body { margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #fff; font-family: 'Inter', sans-serif; }
-                                  .tag { width: 350px; border: 3px solid #c9a84c; padding: 2.5rem; border-radius: 24px; text-align: center; position: relative; background: #fafaf8; box-sizing: border-box; }
-                                  .header { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-bottom: 1.5rem; }
-                                  .nursery-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #c9a84c; }
-                                  .nursery-name { font-size: 0.9rem; font-weight: 700; color: #0a1a0f; text-transform: uppercase; letter-spacing: 0.05em; }
-                                  .specimen-name { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #0a1a0f; margin: 0 0 0.2rem; }
-                                  .variety { font-size: 1rem; color: #c9a84c; font-weight: 600; margin-bottom: 1.5rem; }
-                                  .qr-container { background: white; padding: 1rem; border-radius: 12px; display: inline-block; border: 1px solid #eee; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-                                  .qr-image { width: 180px; height: 180px; display: block; }
-                                  .footer { margin-top: 1.5rem; }
-                                  .seal-text { font-size: 0.7rem; font-weight: 800; color: #c9a84c; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem; }
-                                  .hash { font-family: monospace; font-size: 1.1rem; color: #333; letter-spacing: 0.1em; background: #f0f0f0; padding: 0.3rem 0.6rem; border-radius: 4px; display: inline-block; }
-                                  .instruction { font-size: 0.75rem; color: #666; margin-top: 1rem; font-weight: 600; }
-                                  @media print { body { background: none; } .tag { border-color: #000; } }
+                                  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Inter:wght@400;500;700&display=swap');
+                                  body { margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #e0e0e0; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                                  /* Standard Plant Tag / Card Size: 54mm x 86mm */
+                                  .card { width: 54mm; height: 86mm; background: #0a1a0f; color: #fff; padding: 5mm; box-sizing: border-box; border-radius: 3mm; display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid #c9a84c; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+                                  .bg-pattern { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.08; background-image: radial-gradient(#c9a84c 1px, transparent 1px); background-size: 8px 8px; z-index: 0; }
+                                  .content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; justify-content: space-between; text-align: center; }
+                                  .header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5mm; }
+                                  .logo { width: 8mm; height: 8mm; border-radius: 50%; object-fit: cover; border: 1px solid #c9a84c; background: #fff; }
+                                  .brand-name { font-size: 6pt; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 0.1em; }
+                                  .specimen-info { margin-top: 2mm; }
+                                  .specimen { font-family: 'Playfair Display', serif; font-size: 13pt; color: #fff; margin: 0 0 1mm; line-height: 1.1; font-weight: 800; }
+                                  .variety { font-size: 6.5pt; color: rgba(255,255,255,0.8); font-weight: 500; font-style: italic; }
+                                  .qr-wrapper { background: #fff; padding: 2mm; border-radius: 2mm; margin: 2mm auto 0; width: 28mm; height: 28mm; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+                                  .qr { width: 100%; height: 100%; display: block; }
+                                  .footer { margin-top: auto; border-top: 1px solid rgba(201,168,76,0.3); padding-top: 2mm; }
+                                  .id-label { font-size: 4.5pt; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.5mm; }
+                                  .hash { font-family: monospace; font-size: 10pt; color: #c9a84c; letter-spacing: 0.1em; font-weight: 700; }
+                                  .action { font-size: 5pt; color: #0a1a0f; margin-top: 1.5mm; text-transform: uppercase; letter-spacing: 0.15em; background: #c9a84c; padding: 1mm 0; border-radius: 1mm; font-weight: 700; }
+                                  @media print {
+                                    body { background: none; display: block; }
+                                    .card { margin: 0; box-shadow: none; border: none; }
+                                    @page { margin: 0; size: 54mm 86mm; }
+                                  }
                                 </style>
                               </head>
                               <body>
-                                <div class="tag">
-                                  <div class="header">
-                                    ${vendorLogo ? `<img src="${vendorLogo}" class="nursery-logo" />` : ''}
-                                    <span class="nursery-name">${vendorName}</span>
-                                  </div>
-                                  <h2 class="specimen-name">${p.specimen_name}</h2>
-                                  <div class="variety">${p.inventory?.variety || 'Authentic Specimen'}</div>
-                                  <div class="qr-container">
-                                    <img src="${qrUrl}" class="qr-image" />
-                                  </div>
-                                  <div class="footer">
-                                    <div class="seal-text">Verified Provenance</div>
-                                    <div class="hash">${p.verification_hash.toUpperCase()}</div>
-                                    <p class="instruction">SCAN TO VERIFY REGISTRY RECORD</p>
+                                <div class="card">
+                                  <div class="bg-pattern"></div>
+                                  <div class="content">
+                                    <div class="header">
+                                      ${vendorLogo ? `<img src="${vendorLogo}" class="logo" />` : ''}
+                                      <div class="brand-name">${vendorName}</div>
+                                    </div>
+                                    <div class="specimen-info">
+                                      <h2 class="specimen">${p.specimen_name}</h2>
+                                      <div class="variety">${p.inventory?.variety || 'Registered Authenticity'}</div>
+                                    </div>
+                                    <div class="qr-wrapper">
+                                      <img src="${qrUrl}" class="qr" />
+                                    </div>
+                                    <div class="footer">
+                                      <div class="id-label">CultivarID</div>
+                                      <div class="hash">${p.verification_hash.toUpperCase()}</div>
+                                      <div class="action">Scan to Verify</div>
+                                    </div>
                                   </div>
                                 </div>
                                 <script>

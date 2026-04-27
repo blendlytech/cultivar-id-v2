@@ -18,15 +18,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing verification hash' }, { status: 400 });
     }
 
-    // 1. Get collector ID
-    const { data: collector } = await supabase
+    // 1. Get collector ID or auto-create one
+    let { data: collector } = await supabase
       .from('collectors')
       .select('id')
       .eq('user_id', user.id)
       .single();
 
     if (!collector) {
-      return NextResponse.json({ error: 'Collector profile not found' }, { status: 404 });
+      // Auto-create a collector profile for this user if they don't have one
+      const { data: newCollector, error: createError } = await supabase
+        .from('collectors')
+        .insert({
+          user_id: user.id,
+          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Collector',
+        })
+        .select('id')
+        .single();
+        
+      if (createError || !newCollector) {
+        return NextResponse.json({ error: 'Failed to create collector profile' }, { status: 500 });
+      }
+      collector = newCollector;
     }
 
     // 2. Find passport by hash

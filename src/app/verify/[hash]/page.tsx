@@ -65,11 +65,6 @@ export default function VerifyPassportPage({ params }: { params: { hash: string 
       return;
     }
 
-    if (!collector) {
-      alert("Please complete your collector profile to claim specimens.");
-      return;
-    }
-
     setClaimLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -344,9 +339,112 @@ export default function VerifyPassportPage({ params }: { params: { hash: string 
             {/* Actions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <button 
-                onClick={() => window.print()} 
+                onClick={() => {
+                  const win = window.open('', '_blank');
+                  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`;
+                  const vendorLogo = passport.vendors?.logo_url || '';
+                  const vendorName = passport.vendors?.name || 'Rare Plant Vendors';
+                  const dateStr = new Date(passport.issued_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                  
+                  win?.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <title>Certificate of Authenticity - ${passport.specimen_name}</title>
+                        <style>
+                          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;700&display=swap');
+                          body { margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #e0e0e0; font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                          /* A4 Size */
+                          .certificate { width: 210mm; height: 297mm; background: #fafaf8; padding: 20mm; box-sizing: border-box; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+                          .border-inner { border: 2px solid #c9a84c; height: 100%; box-sizing: border-box; padding: 15mm; display: flex; flex-direction: column; position: relative; }
+                          .border-inner::before { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: 1px solid rgba(201,168,76,0.4); pointer-events: none; }
+                          .header { text-align: center; margin-bottom: 15mm; }
+                          .logo { width: 25mm; height: 25mm; border-radius: 50%; object-fit: cover; border: 2px solid #c9a84c; margin-bottom: 5mm; }
+                          .brand { font-size: 14pt; font-weight: 700; color: #0a1a0f; text-transform: uppercase; letter-spacing: 0.15em; }
+                          .title { font-family: 'Playfair Display', serif; font-size: 36pt; color: #c9a84c; margin: 10mm 0 5mm; font-style: italic; text-align: center; font-weight: 400; }
+                          .subtitle { text-align: center; font-size: 11pt; color: #333; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20mm; }
+                          .specimen-name { font-family: 'Playfair Display', serif; font-size: 42pt; color: #0a1a0f; text-align: center; margin: 0 0 5mm; font-weight: 700; line-height: 1.1; }
+                          .variety { text-align: center; font-size: 14pt; color: #666; font-style: italic; margin-bottom: 20mm; }
+                          .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; margin-bottom: 20mm; }
+                          .detail-item { border-bottom: 1px solid #e0e0e0; padding-bottom: 3mm; }
+                          .detail-label { font-size: 8pt; color: #999; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 2mm; }
+                          .detail-value { font-size: 12pt; color: #0a1a0f; font-weight: 600; }
+                          .footer-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; margin-top: auto; }
+                          .signature-line { border-top: 1px solid #0a1a0f; width: 100%; margin-bottom: 2mm; }
+                          .signature-label { font-size: 9pt; color: #666; text-transform: uppercase; letter-spacing: 0.1em; }
+                          .qr-wrapper { text-align: center; }
+                          .qr { width: 35mm; height: 35mm; display: block; margin: 0 auto 3mm; }
+                          .hash { font-family: monospace; font-size: 12pt; color: #c9a84c; letter-spacing: 0.1em; font-weight: 700; background: #0a1a0f; padding: 2mm 4mm; display: inline-block; color: white; border-radius: 2mm; }
+                          @media print {
+                            body { background: none; display: block; }
+                            .certificate { margin: 0; box-shadow: none; padding: 10mm; width: 100%; height: 100%; }
+                            @page { margin: 0; size: A4 portrait; }
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div class="certificate">
+                          <div class="border-inner">
+                            <div class="header">
+                              ${vendorLogo ? `<img src="${vendorLogo}" class="logo" />` : ''}
+                              <div class="brand">${vendorName}</div>
+                            </div>
+                            
+                            <h1 class="title">Certificate of Authenticity</h1>
+                            <div class="subtitle">Official CultivarID Registry Document</div>
+                            
+                            <div class="specimen-name">${passport.specimen_name}</div>
+                            <div class="variety">${passport.inventory?.variety || 'Registered Specimen'}</div>
+                            
+                            <div class="details-grid">
+                              <div class="detail-item">
+                                <div class="detail-label">Propagation Method</div>
+                                <div class="detail-value">${passport.propagation_method}</div>
+                              </div>
+                              <div class="detail-item">
+                                <div class="detail-label">Genetic Lineage / Origin</div>
+                                <div class="detail-value">${passport.mother_plant_origin || 'Original Stock'}</div>
+                              </div>
+                              <div class="detail-item">
+                                <div class="detail-label">Registration Date</div>
+                                <div class="detail-value">${dateStr}</div>
+                              </div>
+                              <div class="detail-item">
+                                <div class="detail-label">Nursery Location</div>
+                                <div class="detail-value">${passport.vendors?.location_city || ''}, ${passport.vendors?.location_state || ''}</div>
+                              </div>
+                            </div>
+                            
+                            <div class="footer-grid">
+                              <div style="padding-right: 20mm;">
+                                <div class="signature-line"></div>
+                                <div class="signature-label">Authorized Signature</div>
+                              </div>
+                              <div class="qr-wrapper">
+                                <img src="${qrUrl}" class="qr" />
+                                <div class="hash">${passport.verification_hash.toUpperCase()}</div>
+                                <div style="font-size: 8pt; margin-top: 2mm; color: #666; letter-spacing: 0.1em;">SCAN TO VERIFY</div>
+                              </div>
+                              <div style="text-align: right; font-size: 9pt; color: #999; line-height: 1.5; padding-left: 10mm;">
+                                This document certifies that the botanical specimen described above is authentic and has been registered on the secure CultivarID ledger.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <script>
+                          window.onload = () => {
+                            setTimeout(() => { 
+                              window.print(); 
+                              window.close(); 
+                            }, 800);
+                          };
+                        </script>
+                      </body>
+                    </html>
+                  `);
+                }} 
                 className="btn-ghost" 
-                style={{ width: '100%', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}
+                style={{ width: '100%', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', border: '1px solid var(--gold)', color: 'var(--gold)' }}
               >
                 🖨️ Export Certificate
               </button>

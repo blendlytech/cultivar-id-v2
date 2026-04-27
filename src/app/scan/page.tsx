@@ -55,10 +55,8 @@ export default function QRScannerPage() {
   }, []);
 
   const handleScanSuccess = (decodedText: string) => {
-    // Check if the decoded text is a valid RPV verify URL or just a hash
     let hash = "";
-    
-    if (decodedText.includes('rareplantvendors.com/verify/')) {
+    if (decodedText.includes('/verify/')) {
       const parts = decodedText.split('/verify/');
       hash = parts[parts.length - 1].split('?')[0].split('#')[0];
     } else if (decodedText.length === 8 || decodedText.length === 12) {

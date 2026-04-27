@@ -1,0 +1,14 @@
+[2026-04-27T17:57:07.790Z] Onboarding request received {
+  "email": "test-buyer-bloom@example.com",
+  "businessName": "Bloom Test Nursery"
+}
+[2026-04-27T17:57:13.430Z] Verifying SMTP connection... 
+[2026-04-27T17:57:15.876Z] SMTP connection verified 
+[2026-04-27T17:57:15.928Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T17:57:17.772Z] Email sent successfully {
+  "messageId": "<fd25643a-0148-b3e7-d05c-0c0d11632d30@rareplantvendors.com>"
+}
