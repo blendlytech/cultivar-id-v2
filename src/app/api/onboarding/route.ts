@@ -46,17 +46,10 @@ export async function POST(request: Request) {
     if (existingUser) {
       userId = existingUser.id;
       
-      // If already verified, just tell them to login
-      if (existingUser.email_confirmed_at) {
-        return NextResponse.json({ 
-          error: "This email is already registered and verified. Please proceed to login.",
-          code: 'already_verified'
-        }, { status: 400 });
-      }
-
-      // If not verified, update password and get a new link
+      // If already verified, update password
       const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(userId, {
         password: data.password || 'TemporaryPassword123!',
+        email_confirm: true,
         user_metadata: {
           business_name: data.businessName,
           role: 'vendor'
@@ -68,29 +61,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: `Update Error: ${updateError.message}` }, { status: 500 });
       }
 
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-        type: 'signup',
-        email: data.email,
-        password: data.password || 'TemporaryPassword123!'
-      });
-
-      if (linkError) {
-        console.error('Link generation error:', linkError);
-        return NextResponse.json({ error: `Link Error: ${linkError.message}` }, { status: 500 });
-      }
-
-      actionLink = linkData.properties.action_link;
+      actionLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
     } else {
-      // Create new user
-      const { data: linkData, error: authError } = await supabase.auth.admin.generateLink({
-        type: 'signup',
+      // Create new user directly as confirmed
+      const { data: userData, error: authError } = await supabase.auth.admin.createUser({
         email: data.email,
         password: data.password || 'TemporaryPassword123!',
-        options: {
-          data: {
-            business_name: data.businessName,
-            role: 'vendor'
-          }
+        email_confirm: true,
+        user_metadata: {
+          business_name: data.businessName,
+          role: 'vendor'
         }
       });
 
@@ -99,8 +79,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: `Auth Error: ${authError.message}` }, { status: 500 });
       }
 
-      userId = linkData.user.id;
-      actionLink = linkData.properties.action_link;
+      userId = userData.user.id;
+      actionLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`;
     }
 
     // 2. Generate a simple slug from business name or owner name

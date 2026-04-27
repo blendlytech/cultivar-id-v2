@@ -103,3 +103,33 @@
   "messageId": "<41281d6e-d395-6473-2a6a-87a5facd0f8f@rareplantvendors.com>",
   "actionLink": "https://dkdrvfemtyuapzuwyrgt.supabase.co/auth/v1/verify?token=738818f7e1ce328133e67e090f3139a9121cbefa80bf92a7b24bfd8d&type=signup&redirect_to=https://botanicals-directory-deal-source.vercel.app/"
 }
+[2026-04-27T19:56:38.032Z] Onboarding request received {
+  "email": "frictionless-test@example.com",
+  "businessName": "Frictionless Test Botanicals"
+}
+[2026-04-27T19:56:42.149Z] Verifying SMTP connection... 
+[2026-04-27T19:56:46.731Z] SMTP connection verified 
+[2026-04-27T19:56:46.735Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T19:56:49.336Z] Email sent successfully {
+  "messageId": "<c79614e9-39cc-a25c-f44e-5a74b76ce9d5@rareplantvendors.com>",
+  "actionLink": "http://localhost:3000/dashboard"
+}
+[2026-04-27T20:15:18.366Z] Onboarding request received {
+  "email": "frictionless-test-v4@example.com",
+  "businessName": "Frictionless Test Botanicals"
+}
+[2026-04-27T20:15:21.663Z] Verifying SMTP connection... 
+[2026-04-27T20:15:24.958Z] SMTP connection verified 
+[2026-04-27T20:15:24.964Z] Attempting to send email via SMTP {
+  "host": "mail.spacemail.com",
+  "port": "465",
+  "user": "clay.mills@rareplantvendors.com"
+}
+[2026-04-27T20:15:26.795Z] Email sent successfully {
+  "messageId": "<79a4f9dc-9f1e-2544-4c90-2ce2965569cc@rareplantvendors.com>",
+  "actionLink": "http://localhost:3000/dashboard"
+}

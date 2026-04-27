@@ -96,7 +96,7 @@ export default function DashboardPage() {
     { href: '/dashboard/settings', label: '⚙️ Settings' },
   ];
 
-  if (isPaying && stats) {
+  if ((isPaying || stats?.subscription_status === 'pending_payment') && stats) {
     return (
       <div style={{ display: 'flex', minHeight: '100vh' }}>
         <Sidebar navItems={navItems} tier={tier} stats={stats} />

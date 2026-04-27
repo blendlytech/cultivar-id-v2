@@ -4,11 +4,13 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Leaf, ShieldCheck, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
 
 function OnboardingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialPlan = searchParams.get('plan') || 'sprout';
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     businessName: '',
@@ -43,10 +45,20 @@ function OnboardingForm() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      setSuccess(true);
+      // Auto-login!
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (loginError) {
+        throw new Error(loginError.message || 'Failed to log in automatically');
+      }
+
+      router.push('/dashboard');
+      router.refresh();
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
