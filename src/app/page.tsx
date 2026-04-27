@@ -45,7 +45,7 @@ export default async function Home() {
         gap: '1.5rem'
       }}>
         <span>MIAMI FESTIVAL PUSH: 37/66 VENDORS SECURED</span>
-        <Link href="/miami" style={{ 
+        <Link href="/onboarding?campaign=miami" style={{ 
           background: 'black', 
           color: 'white', 
           padding: '0.3rem 1rem', 

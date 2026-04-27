@@ -84,10 +84,10 @@ export default function LoginPage() {
         
         <div style={{ marginTop: '2rem', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div>
-            Not a vendor yet? <a href="/for-vendors" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Apply Here</a>
+            Not a vendor yet? <Link href="/onboarding" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Apply Here</Link>
           </div>
           <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
-            Are you a Collector? <a href="/collector/login" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Access Collector Portal</a>
+            Are you a Collector? <Link href="/signup" style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 600 }}>Create Collector Account</Link>
           </div>
         </div>
       </div>

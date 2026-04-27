@@ -22,18 +22,17 @@ export default function FooterClient() {
 
         <div className="footer-col">
           <h4>Discover</h4>
-          <Link href="/events" id="footer-events-link">Upcoming Events</Link>
-          <Link href="/vendors" id="footer-vendors-link">Verified Vendors</Link>
           <Link href="/scan" id="footer-cultivar-link">CultivarID™</Link>
-          <Link href="/events" id="footer-map-link">Event Map</Link>
+          <Link href="/signup" id="footer-signup-link">Collector Signup</Link>
+          <Link href="/about" id="footer-about-link">The Mission</Link>
         </div>
 
         <div className="footer-col">
           <h4>For Vendors</h4>
-          <Link href="/for-vendors" id="footer-list-booth-link">List Your Booth</Link>
-          <Link href="/for-vendors" id="footer-verification-link">Verification Program</Link>
+          <Link href="/onboarding" id="footer-list-booth-link">Claim Your Booth</Link>
+          <Link href="/onboarding" id="footer-verification-link">Verification Program</Link>
           <Link href="/scan" id="footer-passport-link">Digital Passport</Link>
-          <Link href="/for-vendors" id="footer-pricing-link">Pricing</Link>
+          <Link href="/login" id="footer-login-link">Vendor Login</Link>
         </div>
 
         <div className="footer-col">

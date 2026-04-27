@@ -27,14 +27,11 @@ export default function NavbarClient() {
         <span className="logo-text">Rare Plant<br />Vendors</span>
       </Link>
       <div className="nav-links">
-        <Link href="/events" id="nav-events-link">Events</Link>
-        <Link href="/vendors" id="nav-vendors-link">Vendors</Link>
         <Link href="/scan" id="nav-cultivar-link">CultivarID</Link>
         <Link href="/about" id="nav-about-link">About</Link>
-        <a href="/collector/login" id="nav-collector-link" style={{ fontSize: '0.8rem', opacity: 0.7, marginRight: '1rem' }}>Collector Portal</a>
-        <Link href="/login" id="nav-vendor-portal-link" style={{ fontSize: '0.8rem', opacity: 0.7, marginRight: '1rem' }}>Vendor Portal</Link>
+        <Link href="/login" id="nav-vendor-portal-link" style={{ fontSize: '0.8rem', opacity: 0.7, marginRight: '1rem' }}>Portal Login</Link>
         <ThemeToggle />
-        <Link href="/for-vendors" className="btn-primary" id="nav-list-booth-btn">List Your Booth</Link>
+        <Link href="/onboarding" className="btn-primary" id="nav-list-booth-btn">Claim Your Booth</Link>
       </div>
     </nav>
   );
