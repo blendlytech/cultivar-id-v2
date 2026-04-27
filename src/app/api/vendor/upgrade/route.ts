@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
+import { createClient } from '@/utils/supabase/server';
 import { notificationService } from '@/lib/services/notificationService';
 
 function getInternalTier(tier: string): string {
@@ -18,14 +19,37 @@ function getInternalTier(tier: string): string {
 
 export async function POST(request: Request) {
   try {
+    // ── AUTH CHECK: Verify the requesting user is logged in ──
+    const userSupabase = await createClient();
+    const { data: { user }, error: authErr } = await userSupabase.auth.getUser();
+
+    if (authErr || !user) {
+      return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
+    }
+
     const { vendorId, orderId, planId, details } = await request.json();
 
     if (!vendorId) {
       return NextResponse.json({ error: 'Vendor ID is required' }, { status: 400 });
     }
 
-    // 1. Log the transaction (In a production app, you'd have a transactions table)
-    console.log(`Processing upgrade for Vendor ${vendorId} to Plan ${planId} with Order ${orderId}`);
+    // ── OWNERSHIP CHECK: Verify this user owns the vendor record ──
+    const { data: vendorCheck, error: vendorCheckErr } = await supabase
+      .from('vendors')
+      .select('id, user_id, contact_email')
+      .eq('id', vendorId)
+      .single();
+
+    if (vendorCheckErr || !vendorCheck) {
+      return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+    }
+
+    if (vendorCheck.user_id !== user.id && vendorCheck.contact_email !== user.email) {
+      return NextResponse.json({ error: 'You do not own this vendor account' }, { status: 403 });
+    }
+
+    // 1. Log the transaction
+    console.log(`[upgrade] Processing upgrade for Vendor ${vendorId} to Plan ${planId} with Order ${orderId}`);
 
     // 2. Update the vendor status in Supabase
     const { data: vendor, error } = await supabase
@@ -36,7 +60,6 @@ export async function POST(request: Request) {
         is_verified: true,
         is_elite: planId === 'elite' || planId === 'canopy',
         subscription_status: 'active',
-        // We could also store the PayPal details in a JSONB column if we had one
       })
       .eq('id', vendorId)
       .select()
@@ -57,13 +80,13 @@ export async function POST(request: Request) {
         );
       } catch (emailError) {
         console.error('Failed to send welcome email:', emailError);
-        // We don't fail the whole request just because the email failed
+        // Don't fail the whole request for an email issue
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Vendor upgraded to Elite Status successfully.',
+      message: 'Vendor upgraded successfully.',
       vendor
     });
 

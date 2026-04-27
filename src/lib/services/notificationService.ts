@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false
+    rejectUnauthorized: true
   }
 });
 
@@ -22,7 +22,7 @@ export const notificationService = {
     
     return transporter.sendMail({
       from: `"${process.env.SMTP_FROM_NAME || 'Rare Plant Vendors'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
-      to: 'cmills79@gmail.com', // TEST OVERRIDE
+      to: email,
       subject: `Welcome to the ${tierName} Tier! - Rare Plant Vendors`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e4c97a; border-radius: 8px; padding: 30px; background-color: #fafaf8; color: #0a1a0f;">
@@ -53,7 +53,7 @@ export const notificationService = {
 
     return transporter.sendMail({
       from: `"${process.env.SMTP_FROM_NAME || 'Rare Plant Vendors'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
-      to: 'cmills79@gmail.com', // TEST OVERRIDE
+      to: email,
       subject: subject,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e4c97a; border-radius: 8px; padding: 30px; background-color: #fafaf8; color: #0a1a0f;">

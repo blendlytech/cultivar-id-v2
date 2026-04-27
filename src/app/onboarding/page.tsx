@@ -25,7 +25,6 @@ function OnboardingForm() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,23 +65,6 @@ function OnboardingForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  if (success) {
-    return (
-      <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--bg-surface)', border: '1px solid var(--gold)', borderRadius: '24px', boxShadow: '0 20px 40px var(--gold-dim)' }}>
-        <div style={{ width: '80px', height: '80px', background: 'var(--gold-dim)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
-          <Mail size={40} color="var(--gold)" />
-        </div>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Check Your Email</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '2rem', maxWidth: '400px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
-          We've sent a secure verification link to <strong>{formData.email}</strong>. Click that link to secure your position and access your vendor dashboard to complete your {formData.tier} tier purchase.
-        </p>
-        <Link href="/login" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex' }}>
-          Proceed to Login
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} style={{ background: 'var(--bg-surface)', padding: '3rem', borderRadius: '24px', border: '1px solid var(--glass-border)', boxShadow: 'var(--card-shadow)' }}>

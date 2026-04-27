@@ -1,20 +1,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 import nodemailer from 'nodemailer';
-import fs from 'fs';
-import path from 'path';
-
-const LOG_FILE = path.join(process.cwd(), 'onboarding-debug.log');
 
 function log(message: string, data?: any) {
-  try {
-    const timestamp = new Date().toISOString();
-    const logMessage = `[${timestamp}] ${message} ${data ? JSON.stringify(data, null, 2) : ''}\n`;
-    fs.appendFileSync(LOG_FILE, logMessage);
-  } catch (e) {
-    console.error('Logging failed', e);
-  }
-  console.log(message, data);
+  console.log(`[onboarding] ${message}`, data ?? '');
 }
 
 function getInternalTier(tier: string): string {
@@ -35,10 +24,18 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     log('Onboarding request received', { email: data.email, businessName: data.businessName });
-    
-    // 1. Check if user already exists
-    const { data: existingUsers, error: listError } = await supabase.auth.admin.listUsers();
-    const existingUser = existingUsers?.users.find(u => u.email === data.email);
+
+    // Validate required fields
+    if (!data.email || !data.password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    }
+    if (data.password.length < 8) {
+      return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
+    }
+
+    // 1. Check if user already exists (targeted lookup, not listUsers)
+    const { data: existingUserData } = await supabase.auth.admin.getUserByEmail(data.email);
+    const existingUser = existingUserData?.user ?? null;
 
     let userId;
     let actionLink;
@@ -48,7 +45,7 @@ export async function POST(request: Request) {
       
       // If already verified, update password
       const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(userId, {
-        password: data.password || 'TemporaryPassword123!',
+        password: data.password,
         email_confirm: true,
         user_metadata: {
           business_name: data.businessName,
@@ -66,7 +63,7 @@ export async function POST(request: Request) {
       // Create new user directly as confirmed
       const { data: userData, error: authError } = await supabase.auth.admin.createUser({
         email: data.email,
-        password: data.password || 'TemporaryPassword123!',
+        password: data.password,
         email_confirm: true,
         user_metadata: {
           business_name: data.businessName,
@@ -129,7 +126,7 @@ export async function POST(request: Request) {
         pass: process.env.SMTP_PASS,
       },
       tls: {
-        rejectUnauthorized: false // Helps with some shared hosting environments
+        rejectUnauthorized: true
       }
     });
 
@@ -152,7 +149,7 @@ export async function POST(request: Request) {
       const info = await transporter.sendMail({
         from: `"${process.env.SMTP_FROM_NAME || 'Rare Plant Vendors'}" <${process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER}>`,
         replyTo: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER,
-        to: 'cmills79@gmail.com', // TEST OVERRIDE
+        to: data.email,
         subject: "Verify Your Vendor Account - Rare Plant Vendors",
         text: `Welcome to the Authority Suite, ${data.businessName || 'Vendor'}!\n\nThank you for applying for a vendor directory listing on Rare Plant Vendors. To secure your position and access your dashboard, you must verify your email address.\n\nPlease copy and paste the following link into your browser to verify your email:\n${actionLink}\n\nIf you did not request this, please safely ignore this email.\n\n— The Rare Plant Vendors Team`,
         html: `
